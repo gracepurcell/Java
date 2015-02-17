@@ -8,6 +8,7 @@ public class DBConnection {
 
     private static Connection sConnection;
     // Implement the DBConnection class as a singleton.
+    //<3
     public static Connection getInstance() throws ClassNotFoundException, SQLException {
         String host, db, user, password;
         
