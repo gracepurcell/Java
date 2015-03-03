@@ -40,7 +40,7 @@ public class Model {
     public boolean addEvent(Event e){
         boolean result= false;
         try{
-            int id = this.gateway.insertEvent(e.getDate(), e.getTime(), e.getTitle(), e.getAttending(), e.getAddress(), e.getEventManager(), e.getPrice());
+            int id = this.gateway.insertEvent(e.getDate(), e.getTime(), e.getTitle(), e.getAttending(), e.getPrice(), e.getAddress(), e.getEventManager() );
             if (id != -1){
                 e.setId(id);
                 this.events.add(e);

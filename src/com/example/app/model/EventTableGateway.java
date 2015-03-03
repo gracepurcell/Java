@@ -26,7 +26,7 @@ class EventTableGateway {
         mConnection = connection;
     }
     
-    public int insertEvent(String d, String tm, String tt, String at, String ad, String em, double p) throws SQLException {
+    public int insertEvent(String d, String tm, String tt, String at, double p, String ad, String em ) throws SQLException {
         String query;
         PreparedStatement stmt;
         int numRowsAffected;
