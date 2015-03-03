@@ -66,11 +66,11 @@ public class DemoApp {
     }
     
     private static void deleteEvent(Scanner kb, Model m) {
-        System.out.print("Enter the event title to delete:");
-        String title = kb.nextLine();
+        System.out.print("Enter the event id to delete:");
+        int id = Integer.parseInt(kb.nextLine());
         Event e;
 
-        e = m.findEventByTitle(title);
+        e = m.findEventById(id);
         if (e != null) {
             if (m.removeEvent(e)) {
                 System.out.println("Event deleted");
@@ -85,11 +85,11 @@ public class DemoApp {
     }
     
     private static void editEvents(Scanner kb, Model m) {
-        System.out.print("Enetr the name of the event you wish to edit:");
-        String title = kb.nextLine();
+        System.out.print("Enetr the event id you wish to edit:");
+        int id = Integer.parseInt(kb.nextLine());
         Event e;
-        
-       e = m.findEventByTitle(title);
+
+        e = m.findEventById(id);
        if (e!= null){
            editEventDetails(kb,m,e);
            if(m.updateEvent(e)){

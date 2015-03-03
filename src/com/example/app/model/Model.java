@@ -122,4 +122,23 @@ public class Model {
         
         return updated;
     }
+
+    Event findEventById(int id) {
+        Event e = null;
+        int i = 0;
+        boolean found = false;
+        while (i < this.events.size() && !found){
+            e = this.events.get(i);
+            if(e.getId() == id){
+                found = true;
+            }
+            else {
+                i++;
+            }
+        }
+        if (!found){
+            e = null;
+        }
+        return e;
+    }
 }

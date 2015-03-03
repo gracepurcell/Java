@@ -33,7 +33,6 @@ class EventTableGateway {
         int id = -1;
     
         query = "INSERT INTO " + TABLE_NAME + " (" +
-                COLUMN_ID + ", " +
                 COLUMN_DATE + ", " +
                 COLUMN_TIME + ", " +
                 COLUMN_TITLE + ", " +
@@ -70,7 +69,7 @@ class EventTableGateway {
         PreparedStatement stmt;
         int numRowsAffected;
         
-        query = "DELETE FROM " + TABLE_NAME + "WHERE " + COLUMN_ID + " = ?";
+        query = "DELETE FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?";
         
         stmt = mConnection.prepareStatement(query);
         stmt.setInt(1, id);
@@ -90,6 +89,7 @@ class EventTableGateway {
                             // created for each row in the result of the query
         String title, date, time, attending, address, eventManager;
         double price;
+        int id;
         Event e;       // a Event object created from a row in the result of
                             // the query
 
@@ -104,6 +104,7 @@ class EventTableGateway {
         // empty ArrayList
         events = new ArrayList<Event>();
         while (rs.next()) {
+            id = rs.getInt(COLUMN_ID);
             date = rs.getString(COLUMN_DATE);
             time = rs.getString(COLUMN_TIME);
             title = rs.getString(COLUMN_TITLE);
@@ -112,11 +113,12 @@ class EventTableGateway {
             eventManager = rs.getString(COLUMN_EVENTMANAGER);
             price = rs.getDouble(COLUMN_PRICE);
 
-            e = new Event(date, time, title, attending, address, eventManager, price);
+            e = new Event(id, date, time, title, attending, address, eventManager, price);
             events.add(e);
         }
 
-        return events;    }
+        return events;    
+    }
 
     boolean updateEvent(Event e) throws SQLException {
         String query;
@@ -130,7 +132,7 @@ class EventTableGateway {
                 COLUMN_ATTENDING    + " = ?, " + 
                 COLUMN_ADDRESS      + " = ?, " + 
                 COLUMN_EVENTMANAGER + " = ?, " + 
-                COLUMN_PRICE        + " = ?, " + 
+                COLUMN_PRICE        + " = ? " + 
                 " WHERE " + COLUMN_ID + " = ?";
         
         stmt = mConnection.prepareStatement(query);
@@ -141,6 +143,7 @@ class EventTableGateway {
         stmt.setString(5, e.getAddress());
         stmt.setString(6, e.getEventManager());
         stmt.setDouble(7, e.getPrice());
+        stmt.setInt(8, e.getId());
         
         numRowsAffected = stmt.executeUpdate();
         
