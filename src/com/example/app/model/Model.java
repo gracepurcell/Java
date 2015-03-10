@@ -17,9 +17,12 @@ public class Model {
         }
         return instance;
     }
-
+    
+    private List<Manager> eventmanager;
+    ManagerTableGateway managergateway;
     private List<Event> events;
     EventTableGateway gateway;
+    
 
     private Model() {
 
@@ -28,6 +31,19 @@ public class Model {
             this.gateway = new EventTableGateway(conn);
             
             this.events = gateway.getEvents();
+        } 
+        catch (ClassNotFoundException ex) {
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            Connection conn = DBConnection.getInstance();
+            this.managergateway = new ManagerTableGateway(conn);
+            
+            this.eventmanager = managergateway.getManagers();
         } 
         catch (ClassNotFoundException ex) {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,11 +67,31 @@ public class Model {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
         }  
         return result;
-    }   
+    }  
+    
+    public boolean addManager (Manager ma){
+        boolean result = false;
+        try{
+            int id = this.managergateway.insertManager(ma.getName(), ma.getEmail(), ma.getManaddress(), ma.getPhone() );
+            if (id != -1){
+                ma.setId(id);
+                this.eventmanager.add(ma);
+                result = true;
+            }
+        }
+        catch (SQLException ex){
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
         
 
     public List<Event> getEvents() {
         return new ArrayList<Event>(this.events);
+    }
+    
+    public List<Manager> getManagers(){
+        return new ArrayList<Manager>(this.eventmanager);
     }
     
     public boolean removeEvent(Event e) {
@@ -65,6 +101,21 @@ public class Model {
             removed = this.gateway.deleteEvent(e.getId());
             if (removed){
                 removed = this.events.remove(e);
+            }
+        }
+        catch (SQLException ex){
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return removed;
+    }
+    
+    public boolean removeManager(Manager m) {
+        boolean removed = false;
+        
+        try{
+            removed = this.managergateway.deleteManager(m.getId());
+            if (removed){
+                removed = this.eventmanager.remove(m);
             }
         }
         catch (SQLException ex){
@@ -90,24 +141,23 @@ public class Model {
         }
         return e;
     }
-
-    Event findEventByTile(String title) {
-        Event e = null;
+    
+    public Manager findManagerByName(String name) {
+        Manager m = null;
         int i = 0;
         boolean found = false;
-        while (i < this.events.size() && !found){
-            e = this.events.get(i);
-            if(e.getTitle() == title){
+        while (i < this.eventmanager.size() && !found) {
+            m = this.eventmanager.get(i);
+            if (m.getName().equalsIgnoreCase(name)) {
                 found = true;
-            }
-            else {
+            } else {
                 i++;
             }
         }
-        if (!found){
-            e = null;
+        if (!found) {
+            m = null;
         }
-        return e;
+        return m;
     }
 
     boolean updateEvent(Event e) {
@@ -122,7 +172,20 @@ public class Model {
         
         return updated;
     }
-
+    
+    boolean updateManager(Manager m) {
+        boolean updated = false;
+        
+        try{
+            updated = this.managergateway.updateManager(m);
+        }
+        catch (SQLException ex){
+            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return updated;
+    }
+    
     Event findEventById(int id) {
         Event e = null;
         int i = 0;
@@ -140,5 +203,24 @@ public class Model {
             e = null;
         }
         return e;
+    }
+    
+    Manager findManagerById(int id) {
+        Manager m = null;
+        int i = 0;
+        boolean found = false;
+        while (i < this.eventmanager.size() && !found){
+            m = this.eventmanager.get(i);
+            if(m.getId() == id){
+                found = true;
+            }
+            else {
+                i++;
+            }
+        }
+        if (!found){
+            m = null;
+        }
+        return m;
     }
 }

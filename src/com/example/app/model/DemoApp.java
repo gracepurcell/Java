@@ -18,7 +18,11 @@ public class DemoApp {
             System.out.println("2. Delete existing Event");
             System.out.println("3. Edit existing Event");
             System.out.println("4. View all Events");
-            System.out.println("5. Exit");
+            System.out.println("5. Create new Manager");
+            System.out.println("6. Delete existing Manager");
+            System.out.println("7. Edit existing Manager");
+            System.out.println("8. View all Managers");
+            System.out.println("9. Exit");
             System.out.println();
 
             System.out.print("Enter option: ");
@@ -48,9 +52,33 @@ public class DemoApp {
                     viewEvents(model);
                     break;
                 }
+                
+                case 5: {
+                    System.out.println("Creating Manager");
+                    createManager(keyboard, model);
+                    break;
+                }
+                
+                case 6: {
+                    System.out.println("Deleting Manager");
+                    deleteManager(keyboard, model);
+                    break;
+                }
+                
+                case 7: {
+                    System.out.println("Editing Manager");
+                    editManager(keyboard, model);
+                    break;
+                }
+                
+                case 8:{
+                    System.out.println("Viewing Manager");
+                    viewManager(model);
+                    break;
+                }
             }
         }
-        while (opt != 5);
+        while (opt != 9);
         System.out.println("Goodbye");
     }
     
@@ -61,6 +89,17 @@ public class DemoApp {
         }
         else {
             System.out.println("Event added to database");
+        }
+        System.out.println();
+    }
+    
+    private static void createManager(Scanner keyb, Model mdl){
+        Manager m = readManager(keyb);
+        if (mdl.addManager(m)){
+            System.out.println("Manager added to database");
+        }
+        else {
+            System.out.println("Manager added to database");
         }
         System.out.println();
     }
@@ -84,6 +123,25 @@ public class DemoApp {
         }
     }
     
+    private static void deleteManager(Scanner kb, Model m) {
+        System.out.print("Enter the manager id to delete:");
+        int id = Integer.parseInt(kb.nextLine());
+        Manager ma;
+
+        ma = m.findManagerById(id);
+        if (m != null) {
+            if (m.removeManager(ma)) {
+                System.out.println("Manager deleted");
+            }
+            else {
+                System.out.println("Manager not deleted");
+            }
+        }
+        else {
+            System.out.println("Manager not found");
+        }
+    }
+    
     private static void editEvents(Scanner kb, Model m) {
         System.out.print("Enetr the event id you wish to edit:");
         int id = Integer.parseInt(kb.nextLine());
@@ -104,6 +162,26 @@ public class DemoApp {
        }
     } 
     
+    private static void editManager(Scanner kb, Model m) {
+        System.out.print("Enter the manager id you wish to edit:");
+        int id = Integer.parseInt(kb.nextLine());
+        Manager ma;
+
+        ma = m.findManagerById(id);
+       if (ma!= null){
+           editManagerDetails(kb,m,ma);
+           if(m.updateManager(ma)){
+               System.out.println("Manager updated");
+           }
+           else {
+               System.out.print("Manager not updated");
+           }
+       }
+       else{
+           System.out.println("Manager not found");
+       }
+    }
+    
     private static void viewEvents(Model mdl) {
         List<Event> events = mdl.getEvents();
         System.out.println();
@@ -122,6 +200,26 @@ public class DemoApp {
                     ev.getAddress(),
                     ev.getEventManager(),
                     ev.getPrice());
+            }
+        }
+        System.out.println();
+    }
+    
+    private static void viewManager(Model model) {
+        List<Manager> eventmanager = model.getManagers();
+        System.out.println();
+        if (eventmanager.isEmpty()){
+            System.out.println("There are no managers in this database.");
+        }
+        else{
+            System.out.printf("%5s %20s %20s %20s %15s\n", "Id", "Name", "Address", "Email", "Phone");
+            for (Manager ma : eventmanager){
+                System.out.printf("%5d %20s %20s %20s %15s\n",
+                    ma.getId(),
+                    ma.getName(),
+                    ma.getManaddress(),
+                    ma.getEmail(),
+                    ma.getPhone());
             }
         }
         System.out.println();
@@ -148,7 +246,19 @@ public class DemoApp {
         return e;
     }   
     
-    
+    private static Manager readManager(Scanner keyb) {
+        String name, manaddress, email, phone;
+
+        name = getString(keyb, "Enter name: ");
+        manaddress = getString(keyb, "Enter address: ");
+        email = getString(keyb, "Enter email: ");
+        phone = getString(keyb, "Enter phone: ");
+
+        Manager m = 
+                new Manager(name, manaddress, email, phone);
+        
+        return m;
+    }
 
     private static String getString(Scanner keyboard, String prompt) {
         System.out.print(prompt);
@@ -199,6 +309,37 @@ public class DemoApp {
                 
         
     }
+    
+    private static void editManagerDetails(Scanner kb, Model m, Manager ma) {
+        String name, manaddress, email, phone;
+        
+        name = getString(kb, "Enter name[" + ma.getName() + "]:");
+        manaddress = getString(kb, "Enter address[" + ma.getManaddress() + "]:");
+        email = getString(kb, "Enter email[" + ma.getEmail() + "]:");
+        phone = getString(kb, "Enter phone[" + ma.getPhone() + "]:");
+        
+        if (name.length() != 0){
+           ma.setName(name);
+        }
+        
+        if (manaddress.length() != 0){
+            ma.setManaddress(manaddress);
+        }
+        
+        if (email.length() != 0){
+           ma.setEmail(email);
+        }
+        
+        if (phone.length() != 0){
+           ma.setPhone(phone);
+        }
+       
+    }
+
+    
+   
+
+    
 
 
 }
