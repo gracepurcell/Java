@@ -8,23 +8,23 @@ public class Event {
     private String title;
     private String attending;
     private String address;
-    private String eventManager;
     private double price;
+    private int eventManagerId;
 
-    public Event(int id, String d, String tm, String tt, String at, String ad, String em, double p) {
+    public Event(int id, String d, String tm, String tt, String at, String ad, double p, int eventManagerId) {
         this.id = id;
         this.date = d;
         this.time = tm;
         this.title = tt;
         this.attending = at;
         this.address = ad;
-        this.eventManager = em;  
         this.price = p;
+        this.eventManagerId = eventManagerId;
     }
     
 
-    public Event(String d, String tm, String tt, String at, String ad, String em, double p){
-        this(-1, d, tm, tt, at, ad, em, p);
+    public Event(String d, String tm, String tt, String at, String ad, double p, int eventManagerId){
+        this(-1, d, tm, tt, at, ad, p, eventManagerId);
     }
     
     public int getId(){
@@ -75,20 +75,20 @@ public class Event {
         this.address = address;
     }
     
-    public String getEventManager(){
-        return eventManager;
-    }
-    
-    public void setEventManager(String eventManager){
-        this.eventManager = eventManager;
-    }
-    
     public double getPrice(){
         return price; 
     }
     
     public void setPrice(double price){
         this.price = price;
+    }
+    
+    public int getEventManagerId(){
+        return eventManagerId; 
+    }
+    
+    public void setEventManagerId(int eventManagerId){
+        this.eventManagerId = eventManagerId;
     }
     
     

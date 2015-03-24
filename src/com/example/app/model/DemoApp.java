@@ -7,83 +7,91 @@ public class DemoApp {
     
     public static void main(String[] args){
         Scanner keyboard = new Scanner(System.in);
+        Model model;
+        int opt = 9;
         
-        Model model = Model.getInstance();
         
-
-        
-        int opt;
         do {
-            System.out.println("1. Create new Event");
-            System.out.println("2. Delete existing Event");
-            System.out.println("3. Edit existing Event");
-            System.out.println("4. View all Events");
-            System.out.println("5. Create new Manager");
-            System.out.println("6. Delete existing Manager");
-            System.out.println("7. Edit existing Manager");
-            System.out.println("8. View all Managers");
-            System.out.println("9. Exit");
-            System.out.println();
+            try {
+                model = Model.getInstance();
+                
+                System.out.println("1. Create new Event");
+                System.out.println("2. Delete existing Event");
+                System.out.println("3. Edit existing Event");
+                System.out.println("4. View all Events");
+                System.out.println();
+                System.out.println("5. Create new Manager");
+                System.out.println("6. Delete existing Manager");
+                System.out.println("7. Edit existing Manager");
+                System.out.println("8. View all Managers");
+                System.out.println();
+                System.out.println("9. Exit");
+                System.out.println();
 
-            System.out.print("Enter option: ");
-            String line = keyboard.nextLine();
-            opt = Integer.parseInt(line);
 
-            System.out.println("You chose option " + opt);
-            switch (opt) {
-                case 1: {
-                    System.out.println("Creating event");
-                    createEvent(keyboard, model);
-                    break;
+                opt = getInt(keyboard, "Enter option: ", 9);
+
+                System.out.println("You chose option " + opt);
+                switch (opt) {
+                    case 1: {
+                        System.out.println("Creating event");
+                        createEvent(keyboard, model);
+                        break;
+                    }
+                    case 2: {
+                        System.out.println("Deleting event");
+                        deleteEvent(keyboard, model);
+                        break;
+                    }
+                    case 3: {
+                        System.out.println("Editing events");
+                        editEvents(keyboard, model);
+                        break;
+                    }
+
+                    case 4:{
+                        System.out.println("Viewing events");
+                        viewEvents(model);
+                        break;
+                    }
+
+                    case 5: {
+                        System.out.println("Creating Manager");
+                        createManager(keyboard, model);
+                        break;
+                    }
+
+                    case 6: {
+                        System.out.println("Deleting Manager");
+                        deleteManager(keyboard, model);
+                        break;
+                    }
+
+                    case 7: {
+                        System.out.println("Editing Manager");
+                        editManager(keyboard, model);
+                        break;
+                    }
+
+                    case 8:{
+                        System.out.println("Viewing Manager");
+                        viewManager(model);
+                        break;
+                    }
                 }
-                case 2: {
-                    System.out.println("Deleting event");
-                    deleteEvent(keyboard, model);
-                    break;
-                }
-                case 3: {
-                    System.out.println("Editing events");
-                    editEvents(keyboard, model);
-                    break;
-                }
-                
-                case 4:{
-                    System.out.println("Viewing events");
-                    viewEvents(model);
-                    break;
-                }
-                
-                case 5: {
-                    System.out.println("Creating Manager");
-                    createManager(keyboard, model);
-                    break;
-                }
-                
-                case 6: {
-                    System.out.println("Deleting Manager");
-                    deleteManager(keyboard, model);
-                    break;
-                }
-                
-                case 7: {
-                    System.out.println("Editing Manager");
-                    editManager(keyboard, model);
-                    break;
-                }
-                
-                case 8:{
-                    System.out.println("Viewing Manager");
-                    viewManager(model);
-                    break;
-                }
+            }
+            catch (DataAccessException e){
+                System.out.println();
+                System.out.println(e.getMessage());
+                System.out.println();
             }
         }
         while (opt != 9);
         System.out.println("Goodbye");
     }
     
-    private static void createEvent(Scanner keyb, Model mdl){
-        Event e = readEvent(keyb);
+    private static void createEvent(Scanner keyb, Model mdl) throws DataAccessException{
+        Event e = readEvent(keyb, mdl);
         if (mdl.addEvent(e)){
             System.out.println("Event added to database");
         }
@@ -93,7 +101,7 @@ public class DemoApp {
         System.out.println();
     }
     
-    private static void createManager(Scanner keyb, Model mdl){
+    private static void createManager(Scanner keyb, Model mdl) throws DataAccessException{
         Manager m = readManager(keyb);
         if (mdl.addManager(m)){
             System.out.println("Manager added to database");
@@ -104,9 +112,8 @@ public class DemoApp {
         System.out.println();
     }
     
-    private static void deleteEvent(Scanner kb, Model m) {
-        System.out.print("Enter the event id to delete:");
-        int id = Integer.parseInt(kb.nextLine());
+    private static void deleteEvent(Scanner kb, Model m) throws DataAccessException {
+        int id = getInt(kb, "Enter the event id to delete:", -1 );
         Event e;
 
         e = m.findEventById(id);
@@ -123,9 +130,8 @@ public class DemoApp {
         }
     }
     
-    private static void deleteManager(Scanner kb, Model m) {
-        System.out.print("Enter the manager id to delete:");
-        int id = Integer.parseInt(kb.nextLine());
+    private static void deleteManager(Scanner kb, Model m) throws DataAccessException {
+        int id = getInt(kb, "Enter the manager id to delete:", -1);
         Manager ma;
 
         ma = m.findManagerById(id);
@@ -142,9 +148,8 @@ public class DemoApp {
         }
     }
     
-    private static void editEvents(Scanner kb, Model m) {
-        System.out.print("Enetr the event id you wish to edit:");
-        int id = Integer.parseInt(kb.nextLine());
+    private static void editEvents(Scanner kb, Model m) throws DataAccessException {
+        int id = getInt(kb, "Enter the event id to edit:", -1);
         Event e;
 
         e = m.findEventById(id);
@@ -162,9 +167,8 @@ public class DemoApp {
        }
     } 
     
-    private static void editManager(Scanner kb, Model m) {
-        System.out.print("Enter the manager id you wish to edit:");
-        int id = Integer.parseInt(kb.nextLine());
+    private static void editManager(Scanner kb, Model m) throws DataAccessException {
+        int id = getInt(kb, "Enter the manager id to delete:", -1);
         Manager ma;
 
         ma = m.findManagerById(id);
@@ -189,17 +193,18 @@ public class DemoApp {
             System.out.println("There are no events in this database.");
         }
         else{
-            System.out.printf("%5s %20s %20s %20s %15s %12s %20s %8s\n", "Id", "Date", "Time", "Title", "Attending", "Address", "Event Manager", "Price");
+            System.out.printf("%5s %15s %10s %20s %10s %20s %8s %15s\n", "Id", "Date", "Time", "Title", "Attending", "Address", "Price", "Manager");
             for (Event ev : events){
-                System.out.printf("%5d %20s %20s %20s %15s %12s %20s %f8\n",
+                Manager ma = mdl.findManagerById(ev.getEventManagerId());
+                System.out.printf("%5d %15s %10s %20s %10s %20s %8s %15s\n",
                     ev.getId(),
                     ev.getDate(),
                     ev.getTime(),
                     ev.getTitle(),
                     ev.getAttending(),
                     ev.getAddress(),
-                    ev.getEventManager(),
-                    ev.getPrice());
+                    ev.getPrice(),
+                (ma != null) ? ma.getName() : "");
             }
         }
         System.out.println();
@@ -212,7 +217,7 @@ public class DemoApp {
             System.out.println("There are no managers in this database.");
         }
         else{
-            System.out.printf("%5s %20s %20s %20s %15s\n", "Id", "Name", "Address", "Email", "Phone");
+            System.out.printf("%5s %20s %20s %20s %15s\n", "ID", "Name", "Address", "Email", "Phone");
             for (Manager ma : eventmanager){
                 System.out.printf("%5d %20s %20s %20s %15s\n",
                     ma.getId(),
@@ -225,23 +230,23 @@ public class DemoApp {
         System.out.println();
     }
     
-    private static Event readEvent(Scanner keyb) {
-        String date, time, title, attending, address, eventManager;
+    private static Event readEvent(Scanner keyb, Model model) {
+        String date, time, title, attending, address;
         double price;
         String line;
+        int eventManagerId;
 
         date = getString(keyb, "Enter date: ");
         time = getString(keyb, "Enter time: ");
         title = getString(keyb, "Enter title: ");
         attending = getString(keyb, "Enter attending: ");
-        line = getString(keyb, "Enter price: ");
-        price = Double.parseDouble(line);
+        price = getDouble(keyb, "Enter price: ", 0);
         address = getString(keyb, "Enter address: ");
-        eventManager = getString(keyb, "Enter event manager's name: ");
+        viewManager(model);
+        eventManagerId = getInt(keyb, "Enter event manager's id: ", -1);
 
         Event e = 
-                new Event(date, time, title, attending, 
-                        address, eventManager ,price);
+                new Event(date, time, title, attending, address, price, eventManagerId);
         
         return e;
     }   
@@ -260,14 +265,10 @@ public class DemoApp {
         return m;
     }
 
-    private static String getString(Scanner keyboard, String prompt) {
-        System.out.print(prompt);
-        return keyboard.nextLine();
-    }
-
     private static void editEventDetails(Scanner kb, Model m, Event e) {
-        String date, time, title, attending, address, eventManager;
+        String date, time, title, attending, address;
         double price;
+        int eventManager;
         String line1;
         
         date = getString(kb, "Enter date[" + e.getDate() + "]:");
@@ -275,8 +276,8 @@ public class DemoApp {
         title = getString(kb, "Enter title[" + e.getTitle() + "]:");
         attending = getString(kb, "Enter attending[" + e.getAttending() + "]:");
         address = getString(kb, "Enter address[" + e.getAddress() + "]:");
-        eventManager = getString(kb, "Enter event manager[" + e.getEventManager() + "]:");
-        line1 = getString(kb, "Enter price[" + e.getPrice() + "]:");
+        price = getDouble(kb, "Enter price[" + e.getPrice() + "]:", e.getPrice());
+        eventManager = getInt(kb, "Enter event manager id [" + e.getEventManagerId() + "]:", e.getEventManagerId());
         
         if (date.length() != 0){
             e.setDate(date);
@@ -298,16 +299,13 @@ public class DemoApp {
             e.setAddress(address);
         }
         
-        if (eventManager.length() != 0){
-            e.setEventManager(eventManager);
-        }
-        
-        if (line1.length() != 0){
-            price = Integer.parseInt(line1);
+        if (price !=e.getPrice()){
             e.setPrice(price);
         }
                 
-        
+        if (eventManager != e.getEventManagerId()){
+            e.setEventManagerId(eventManager);
+        }
     }
     
     private static void editManagerDetails(Scanner kb, Model m, Manager ma) {
@@ -334,12 +332,56 @@ public class DemoApp {
            ma.setPhone(phone);
         }
        
+       
     }
 
-    
-   
+    private static String getString(Scanner keyboard, String prompt) {
+        System.out.print(prompt);
+        return keyboard.nextLine();
+    }
 
-    
+    private static int getInt(Scanner keyb, String prompt, int defaultValue ){
+        int opt =defaultValue;
+        boolean finished = false;
 
+        do{
+            try {
+                System.out.print(prompt);
+                String line = keyb.nextLine();
+                if (line.length() > 0){
+                    opt = Integer.parseInt(line);
+                }
+                finished = true;
+            }
+            catch (NumberFormatException e){
+                System.out.println("Exception: " + e.getMessage());
+            }
+        }
+        while(!finished);
+
+        return opt;
+    }
+
+     private static double getDouble(Scanner keyb, String prompt, double defaultValue ){
+        double opt =defaultValue;
+        boolean finished = false;
+
+        do{
+            try {
+                System.out.print(prompt);
+                String line = keyb.nextLine();
+                if (line.length() > 0){
+                    opt = Double.parseDouble(line);
+                }
+                finished = true;
+            }
+            catch (NumberFormatException e){
+                System.out.println("Exception: " + e.getMessage());
+            }
+        }
+        while(!finished);
+
+        return opt;
+    }
 
 }

@@ -19,6 +19,7 @@ class EventTableGateway {
     private static final String COLUMN_ADDRESS = "address";
     private static final String COLUMN_EVENTMANAGER = "eventManager";
     private static final String COLUMN_PRICE = "price";
+    private static final String COLUMN_EVENTMANAGER_ID = "ID";
     
     private Connection mConnection;
 
@@ -26,7 +27,7 @@ class EventTableGateway {
         mConnection = connection;
     }
     
-    public int insertEvent(String d, String tm, String tt, String at, double p, String ad, String em ) throws SQLException {
+    public int insertEvent(String d, String tm, String tt, String at, String ad, double p, int em ) throws SQLException {
         String query;
         PreparedStatement stmt;
         int numRowsAffected;
@@ -38,8 +39,8 @@ class EventTableGateway {
                 COLUMN_TITLE + ", " +
                 COLUMN_ATTENDING + ", " +
                 COLUMN_ADDRESS + ", " +
-                COLUMN_EVENTMANAGER + ", " +
-                COLUMN_PRICE + 
+                COLUMN_PRICE + ", " +
+                COLUMN_EVENTMANAGER_ID + " " +
                 ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         stmt = mConnection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
@@ -48,8 +49,8 @@ class EventTableGateway {
         stmt.setString(3, tt);
         stmt.setString(4, at);
         stmt.setString(5, ad);
-        stmt.setString(6, em);
-        stmt.setDouble(7, p);
+        stmt.setDouble(6, p);
+        stmt.setInt(7, em);
         
         numRowsAffected = stmt.executeUpdate();
         if (numRowsAffected == 1){
@@ -87,9 +88,9 @@ class EventTableGateway {
                             // SQL query 
         List<Event> events;   // the java.util.List containing the Programmer objects
                             // created for each row in the result of the query
-        String title, date, time, attending, address, eventManager;
+        String title, date, time, attending, address;
         double price;
-        int id;
+        int id, eventManagerId;
         Event e;       // a Event object created from a row in the result of
                             // the query
 
@@ -110,10 +111,10 @@ class EventTableGateway {
             title = rs.getString(COLUMN_TITLE);
             attending = rs.getString(COLUMN_ATTENDING);
             address = rs.getString(COLUMN_ADDRESS);
-            eventManager = rs.getString(COLUMN_EVENTMANAGER);
             price = rs.getDouble(COLUMN_PRICE);
+            eventManagerId = rs.getInt(COLUMN_EVENTMANAGER_ID);
 
-            e = new Event(id, date, time, title, attending, address, eventManager, price);
+            e = new Event(id, date, time, title, attending, address, price, eventManagerId);
             events.add(e);
         }
 
@@ -131,8 +132,8 @@ class EventTableGateway {
                 COLUMN_TITLE        + " = ?, " + 
                 COLUMN_ATTENDING    + " = ?, " + 
                 COLUMN_ADDRESS      + " = ?, " + 
-                COLUMN_EVENTMANAGER + " = ?, " + 
-                COLUMN_PRICE        + " = ? " + 
+                COLUMN_PRICE        + " = ?, " + 
+                COLUMN_EVENTMANAGER + " = ? " + 
                 " WHERE " + COLUMN_ID + " = ?";
         
         stmt = mConnection.prepareStatement(query);
@@ -141,8 +142,8 @@ class EventTableGateway {
         stmt.setString(3, e.getTitle());
         stmt.setString(4, e.getAttending());
         stmt.setString(5, e.getAddress());
-        stmt.setString(6, e.getEventManager());
-        stmt.setDouble(7, e.getPrice());
+        stmt.setDouble(6, e.getPrice());
+        stmt.setInt(7, e.getEventManagerId());
         stmt.setInt(8, e.getId());
         
         numRowsAffected = stmt.executeUpdate();

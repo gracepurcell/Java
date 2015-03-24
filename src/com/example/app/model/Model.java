@@ -11,7 +11,7 @@ public class Model {
 
     private static Model instance = null;
 
-    public static synchronized Model getInstance() {
+    public static synchronized Model getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new Model();
         }
@@ -24,39 +24,29 @@ public class Model {
     EventTableGateway gateway;
     
 
-    private Model() {
+    private Model() throws DataAccessException {
 
         try {
             Connection conn = DBConnection.getInstance();
             this.gateway = new EventTableGateway(conn);
-            
-            this.events = gateway.getEvents();
-        } 
-        catch (ClassNotFoundException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try {
-            Connection conn = DBConnection.getInstance();
             this.managergateway = new ManagerTableGateway(conn);
             
-            this.eventmanager = managergateway.getManagers();
+            this.eventmanager = this.managergateway.getManagers();
+            this.events = this.gateway.getEvents();
         } 
         catch (ClassNotFoundException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption initialising Model object: " + ex.getMessage());
         } 
         catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption initialising Model object: " + ex.getMessage());
         }
+       
     }
     
-    public boolean addEvent(Event e){
+    public boolean addEvent(Event e) throws DataAccessException{
         boolean result= false;
         try{
-            int id = this.gateway.insertEvent(e.getDate(), e.getTime(), e.getTitle(), e.getAttending(), e.getPrice(), e.getAddress(), e.getEventManager() );
+            int id = this.gateway.insertEvent(e.getDate(), e.getTime(), e.getTitle(), e.getAttending(), e.getAddress(), e.getPrice(), e.getEventManagerId() );
             if (id != -1){
                 e.setId(id);
                 this.events.add(e);
@@ -64,12 +54,12 @@ public class Model {
             }
         } 
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption adding programmer: " + ex.getMessage());
         }  
         return result;
     }  
     
-    public boolean addManager (Manager ma){
+    public boolean addManager (Manager ma) throws DataAccessException{
         boolean result = false;
         try{
             int id = this.managergateway.insertManager(ma.getName(), ma.getEmail(), ma.getManaddress(), ma.getPhone() );
@@ -80,7 +70,7 @@ public class Model {
             }
         }
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption removing programmer: " + ex.getMessage());
         }
         return result;
     }
@@ -94,7 +84,7 @@ public class Model {
         return new ArrayList<Manager>(this.eventmanager);
     }
     
-    public boolean removeEvent(Event e) {
+    public boolean removeEvent(Event e) throws DataAccessException {
         boolean removed = false;
         
         try{
@@ -104,12 +94,12 @@ public class Model {
             }
         }
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption removing Event: " + ex.getMessage());
         }
         return removed;
     }
     
-    public boolean removeManager(Manager m) {
+    public boolean removeManager(Manager m) throws DataAccessException {
         boolean removed = false;
         
         try{
@@ -119,7 +109,7 @@ public class Model {
             }
         }
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption removing event: " + ex.getMessage());
         }
         return removed;
     }
@@ -160,27 +150,27 @@ public class Model {
         return m;
     }
 
-    boolean updateEvent(Event e) {
+    boolean updateEvent(Event e) throws DataAccessException {
         boolean updated = false;
         
         try{
             updated = this.gateway.updateEvent(e);
         }
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption updating event: " + ex.getMessage());
         }
         
         return updated;
     }
     
-    boolean updateManager(Manager m) {
+    boolean updateManager(Manager m) throws DataAccessException {
         boolean updated = false;
         
         try{
             updated = this.managergateway.updateManager(m);
         }
         catch (SQLException ex){
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException("Exeption updating manager: " + ex.getMessage());
         }
         
         return updated;
