@@ -12,10 +12,10 @@ public class DBConnection {
     public static Connection getInstance() throws ClassNotFoundException, SQLException {
         String host, db, user, password;
         
-        host = "daneel";
+        host = "localhost";
         db = "n00132610";
-        user = "N00132610";
-        password = "N00132610";
+        user = "root";
+        password = "";
         
         if (sConnection == null || sConnection.isClosed()) {
             String url = "jdbc:mysql://" + host + "/" + db;
