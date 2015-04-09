@@ -193,10 +193,10 @@ public class DemoApp {
             System.out.println("There are no events in this database.");
         }
         else{
-            System.out.printf("%5s %15s %10s %20s %10s %20s %8s %15s\n", "Id", "Date", "Time", "Title", "Attending", "Address", "Price", "Manager");
+            System.out.printf("%5s %15s %10s %20s %10s %40s %8s %15s\n", "Id", "Date", "Time", "Title", "Attending", "Address", "Price", "Manager",-1);
             for (Event ev : events){
                 Manager ma = mdl.findManagerById(ev.getEventManagerId());
-                System.out.printf("%5d %15s %10s %20s %10s %20s %8s %15s\n",
+                System.out.printf("%5d %15s %10s %20s %10s %40s %8s %15s\n",
                     ev.getId(),
                     ev.getDate(),
                     ev.getTime(),
@@ -217,14 +217,14 @@ public class DemoApp {
             System.out.println("There are no managers in this database.");
         }
         else{
-            System.out.printf("%5s %20s %20s %20s %15s\n", "ID", "Name", "Address", "Email", "Phone");
+            System.out.printf("%5s %20s %20s %20s %15s\n", "ID", "Name", "Phone", "Address", "Email");
             for (Manager ma : eventmanager){
                 System.out.printf("%5d %20s %20s %20s %15s\n",
                     ma.getId(),
                     ma.getName(),
+                    ma.getPhone(),
                     ma.getManaddress(),
-                    ma.getEmail(),
-                    ma.getPhone());
+                    ma.getEmail());
             }
         }
         System.out.println();

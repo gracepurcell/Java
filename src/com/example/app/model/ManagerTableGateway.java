@@ -13,9 +13,9 @@ public class ManagerTableGateway {
     private static final String TABLE_NAME = "eventmanager";
     private static final String COLUMN_ID = "ID";
     private static final String COLUMN_NAME = "Name";
-    private static final String COLUMN_EMAIL = "email";
-    private static final String COLUMN_ADDRESS = "address";
     private static final String COLUMN_PHONE = "phone";
+    private static final String COLUMN_ADDRESS = "address";
+    private static final String COLUMN_EMAIL = "email";
 
 
     private Connection mConnection;
@@ -24,7 +24,7 @@ public class ManagerTableGateway {
         mConnection = connection;
     }
     
-    public int insertManager(String n, String ema, String ma, String ph) throws SQLException{
+    public int insertManager(String n, String ph, String ma, String ema) throws SQLException{
         String query;
         PreparedStatement stmt;
         int numRowsAffected;
@@ -32,18 +32,21 @@ public class ManagerTableGateway {
         
         query = "INSERT INTO " + TABLE_NAME + " (" +
                 COLUMN_NAME + ", " +
-                COLUMN_EMAIL + ", " + 
+                COLUMN_PHONE + ", " +
                 COLUMN_ADDRESS + ", " +
-                COLUMN_PHONE + 
+                COLUMN_EMAIL +
+                
                 ") VALUES (?, ?, ?, ?)";
         
         
         
         stmt = mConnection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, n);
-        stmt.setString(2, ema);
-        stmt.setString(3, ma);
         stmt.setString(4, ph);
+        stmt.setString(3, ma);
+        stmt.setString(2, ema);
+        
+        
         
         
         numRowsAffected = stmt.executeUpdate();
@@ -79,7 +82,7 @@ public class ManagerTableGateway {
         Statement stmt;
         ResultSet rs;
         List<Manager> eventmanagers;
-        String name, email, manaddress, phone;
+        String name, phone, manaddress, email;
         int id;
         Manager m;
         
@@ -91,11 +94,12 @@ public class ManagerTableGateway {
         while (rs.next()){
             id = rs.getInt(COLUMN_ID);
             name = rs.getString(COLUMN_NAME);
-            email = rs.getString(COLUMN_EMAIL);
-            manaddress = rs.getString(COLUMN_ADDRESS);
             phone = rs.getString(COLUMN_PHONE);
+            manaddress = rs.getString(COLUMN_ADDRESS);
+            email = rs.getString(COLUMN_EMAIL);
             
-            m = new Manager (id, name, email, manaddress, phone);
+
+            m = new Manager (id, name, phone, manaddress, email);
             eventmanagers.add(m);
         }
         
@@ -109,17 +113,19 @@ public class ManagerTableGateway {
         
         query = "UPDATE " + TABLE_NAME + " SET " +
                 COLUMN_NAME + " = ?, " + 
-                COLUMN_EMAIL + " = ?, " +
+                COLUMN_PHONE + " = ?, " + 
                 COLUMN_ADDRESS + " = ?, " + 
-                COLUMN_PHONE + " = ? " + 
+                COLUMN_EMAIL + " = ? " +
+                
+                
                 " WHERE " + COLUMN_ID + " = ?";
         
         stmt = mConnection.prepareStatement(query);
-        stmt.setString(1, m.getName());
-        stmt.setString(2, m.getEmail());
-        stmt.setString(3, m.getManaddress());
-        stmt.setString(4, m.getPhone());
-        stmt.setInt(5, m.getId());
+        stmt.setInt(1, m.getId());
+        stmt.setString(2, m.getName());
+        stmt.setString(3, m.getPhone());
+        stmt.setString(4, m.getManaddress());
+        stmt.setString(5, m.getEmail());
         
         numRowsAffected = stmt.executeUpdate();
         
