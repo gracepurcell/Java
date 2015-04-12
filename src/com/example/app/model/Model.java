@@ -54,7 +54,7 @@ public class Model {
             }
         } 
         catch (SQLException ex){
-            throw new DataAccessException("Exeption adding programmer: " + ex.getMessage());
+            throw new DataAccessException("Exeption adding event: " + ex.getMessage());
         }  
         return result;
     }  
@@ -70,7 +70,7 @@ public class Model {
             }
         }
         catch (SQLException ex){
-            throw new DataAccessException("Exeption removing programmer: " + ex.getMessage());
+            throw new DataAccessException("Exeption adding manager: " + ex.getMessage());
         }
         return result;
     }

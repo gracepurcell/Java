@@ -39,15 +39,11 @@ public class ManagerTableGateway {
                 ") VALUES (?, ?, ?, ?)";
         
         
-        
         stmt = mConnection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, n);
         stmt.setString(4, ph);
         stmt.setString(3, ma);
         stmt.setString(2, ema);
-        
-        
-        
         
         numRowsAffected = stmt.executeUpdate();
         if (numRowsAffected == 1){
@@ -57,9 +53,7 @@ public class ManagerTableGateway {
             
             id = keys.getInt(1);
         }
-         
         return id;
-        
     }
     
     public boolean deleteManager(int id) throws SQLException{
